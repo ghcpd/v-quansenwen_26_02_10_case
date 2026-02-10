@@ -265,7 +265,12 @@ class PrettyTable:
         self._attributes = kwargs["attributes"] or {}
 
     def _justify(self, text, width, align):
-        excess = width - _str_block_width(text)
+        text_width = _str_block_width(text)
+        if text_width > width:
+            # Truncate text if it's longer than width
+            text = self._truncate_text(text, width)
+            text_width = width
+        excess = width - text_width
         if align == "l":
             return text + excess * " "
         elif align == "r":
@@ -274,7 +279,7 @@ class PrettyTable:
             if excess % 2:
                 # Uneven padding
                 # Put more space on right if text is of odd length...
-                if _str_block_width(text) % 2:
+                if text_width % 2:
                     return (excess // 2) * " " + text + (excess // 2 + 1) * " "
                 # and more space on left if text is of even length
                 else:
@@ -284,6 +289,16 @@ class PrettyTable:
             else:
                 # Equal padding on either side
                 return (excess // 2) * " " + text + (excess // 2) * " "
+
+    def _truncate_text(self, text, width):
+        """Truncate text to fit within the given width, preserving as much as possible."""
+        if _str_block_width(text) <= width:
+            return text
+        # Simple truncation - cut from the end
+        truncated = text
+        while _str_block_width(truncated) > width and len(truncated) > 0:
+            truncated = truncated[:-1]
+        return truncated
 
     def __getattr__(self, name):
 
