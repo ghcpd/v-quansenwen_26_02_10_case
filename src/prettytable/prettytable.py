@@ -70,6 +70,19 @@ def _get_size(text):
     return width, height
 
 
+def _truncate(text, width):
+    """Truncate a string to a given display width, considering wcwidth."""
+    result = ""
+    curr = 0
+    for ch in text:
+        w = wcwidth.wcswidth(ch)
+        if curr + w > width:
+            break
+        result += ch
+        curr += w
+    return result
+
+
 class PrettyTable:
     def __init__(self, field_names=None, **kwargs):
         """Return a new PrettyTable instance
@@ -1790,9 +1803,13 @@ class PrettyTable:
                 bits.append(options["vertical_char"])
             else:
                 bits.append(" ")
-        for (field, width) in zip(self._field_names, self._widths):
+
+        # Process header field names into possibly multi-line entries
+        header_cells = []
+        for field, width in zip(self._field_names, self._widths):
             if options["fields"] and field not in options["fields"]:
                 continue
+            # Apply header style
             if self._header_style == "cap":
                 fieldname = field.capitalize()
             elif self._header_style == "title":
@@ -1803,21 +1820,48 @@ class PrettyTable:
                 fieldname = field.lower()
             else:
                 fieldname = field
-            bits.append(
-                " " * lpad
-                + self._justify(fieldname, width, self._align[field])
-                + " " * rpad
-            )
-            if options["border"]:
-                if options["vrules"] == ALL:
-                    bits.append(options["vertical_char"])
+
+            # Truncate header text if necessary
+            lines = fieldname.split("\n")
+            new_lines = []
+            for line in lines:
+                if _str_block_width(line) > width:
+                    line = _truncate(line, width)
+                new_lines.append(line)
+            header_cells.append((field, width, new_lines))
+
+        # Determine header height
+        header_height = 0
+        for _, _, lines in header_cells:
+            if len(lines) > header_height:
+                header_height = len(lines)
+
+        # Build header lines
+        for idx in range(header_height):
+            if idx > 0:
+                if options["border"]:
+                    if options["vrules"] in (ALL, FRAME):
+                        bits.append("\n" + options["vertical_char"])
+                    else:
+                        bits.append("\n ")
                 else:
-                    bits.append(" ")
-        # If vrules is FRAME, then we just appended a space at the end
-        # of the last field, when we really want a vertical character
-        if options["border"] and options["vrules"] == FRAME:
-            bits.pop()
-            bits.append(options["vertical_char"])
+                    bits.append("\n")
+            for (field, width, lines) in header_cells:
+                value = lines[idx] if idx < len(lines) else ""
+                bits.append(
+                    " " * lpad
+                    + self._justify(value, width, self._align[field])
+                    + " " * rpad
+                )
+                if options["border"]:
+                    if options["vrules"] == ALL:
+                        bits.append(self.vertical_char)
+                    else:
+                        bits.append(" ")
+            if options["border"] and options["vrules"] == FRAME:
+                bits.pop()
+                bits.append(self.vertical_char)
+
         if options["border"] and options["hrules"] != NONE:
             bits.append("\n")
             bits.append(self._hrule)

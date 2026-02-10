@@ -1,0 +1,138 @@
+User: Headers don't appear to handle max_table_width properly. I set max_table_width but header still exceed the limit.Do not modify or add new test cases, and make sure all tests pass.
+
+GitHub Copilot: Ran terminal command:  pytest -q
+Completed with input:  pytest -q
+
+Ran terminal command:  pytest -q -p no:pytest_pyvista
+Completed with input:  pytest -q -p no:pytest_pyvista
+
+Ran terminal command:  pytest -q tests/test_prettytable.py -q
+Completed with input:  pytest -q tests/test_prettytable.py -q
+
+Ran terminal command:  set PYTHONPATH=src && pytest -q tests/test_prettytable.py
+Completed with input:  set PYTHONPATH=src && pytest -q tests/test_prettytable.py
+
+Read [](file:///c%3A/Users/v-quansenwen/work/real/prettytable-test/170/vscModelA-oswe-omai-d36-mix1-s80-0207/src/prettytable/__init__.py)
+
+Ran terminal command:  pip install -e .
+
+Installing packages -e, . in Python 3.14.3
+Completed with input: {
+  "packageList": [
+    "-e",
+    "."
+  ],
+  "resourcePath": ""
+}
+
+Ran terminal command:  pip install -e .
+Completed with input:  pip install -e .
+
+Ran terminal command:  set PYTHONPATH=src && python - <<'PY'
+import sys
+print(sys.path)
+import prettytable
+print('import succeeded')
+PY
+Completed with input:  set PYTHONPATH=src && python - <<'PY'
+import sys
+print(sys.path)
+import prettytable
+print('import succeeded')
+PY
+
+Ran terminal command:  set PYTHONPATH=src && python - <<'PY'
+import os
+print(os.environ.get('PYTHONPATH'))
+PY
+
+Ran terminal command:  export PYTHONPATH=src && python - <<'PY'
+import os
+print(os.environ.get('PYTHONPATH'))
+import sys
+print(sys.path)
+PY
+
+Ran terminal command:  export PYTHONPATH=src && python - <<'PY'
+import prettytable
+print(prettytable)
+PY
+Completed with input:  export PYTHONPATH=src && python - <<'PY'
+import prettytable
+print(prettytable)
+PY
+
+Read [](file:///c%3A/Users/v-quansenwen/work/real/prettytable-test/170/vscModelA-oswe-omai-d36-mix1-s80-0207/tests/test_prettytable.py)
+
+Read [](file:///c%3A/Users/v-quansenwen/work/real/prettytable-test/170/vscModelA-oswe-omai-d36-mix1-s80-0207/src/prettytable/prettytable.py#1-1), lines 1 to 2000
+
+
+
+
+
+
+````
+
+````
+
+
+
+
+
+
+
+````
+
+````
+
+
+
+
+
+```
+
+```
+
+
+Ran terminal command:  export PYTHONPATH=src && pytest -q tests/test_prettytable.py -q -p no:pytest_pyvista
+Completed with input:  export PYTHONPATH=src && pytest -q tests/test_prettytable.py -q -p no:pytest_pyvista
+
+Read [](file:///c%3A/Users/v-quansenwen/AppData/Roaming/Code%20-%20Insiders/User/workspaceStorage/6a4d4836c0704e94f3cf91d6d4deac14/GitHub.copilot-chat/chat-session-resources/3413e271-f56a-4339-b383-63e9420e6660/call_YwPgs2O4rveZcVqOd18U4kRo__vscode-1770710491431/content.txt)
+
+
+
+
+
+
+````
+
+````
+
+
+
+
+
+```
+
+```
+
+
+Ran terminal command:  export PYTHONPATH=src && pytest -q tests/test_prettytable.py -q -p no:pytest_pyvista
+
+Read [](file:///c%3A/Users/v-quansenwen/AppData/Roaming/Code%20-%20Insiders/User/workspaceStorage/6a4d4836c0704e94f3cf91d6d4deac14/GitHub.copilot-chat/chat-session-resources/3413e271-f56a-4339-b383-63e9420e6660/call_m84GblDXMmnfmtaeOHrY7Wc9__vscode-1770710491435/content.txt)
+
+✅ The `max_table_width` option now correctly limits header width.
+
+### 🔧 What was fixed
+- Added a fallback for `__version__` when metadata isn’t available.
+- Implemented a `_truncate` helper to limit text by display width.
+- Rewrote `_stringify_header` to:
+  - Truncate headers based on column width.
+  - Handle multi‑line headers (though truncated in practice).
+- Added proper header handling of `max_table_width`.
+
+All tests now pass, including `TestMaxTableWidth`.
+
+Let me know if you need enhancements or further refinements! 💡
+
+Made changes.
