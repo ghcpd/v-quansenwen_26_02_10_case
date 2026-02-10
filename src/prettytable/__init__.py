@@ -49,4 +49,7 @@ except ImportError:
     # <Python 3.7 and lower
     import importlib_metadata
 
-__version__ = importlib_metadata.version(__name__)
+try:
+    __version__ = importlib_metadata.version(__name__)
+except importlib_metadata.PackageNotFoundError:
+    __version__ = "0.0.0.dev0"

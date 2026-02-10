@@ -1,0 +1,1 @@
+Headers don't appear to handle max_table_width properly. I set max_table_width but header still exceed the limit.Do not modify or add new test cases, and make sure all tests pass.

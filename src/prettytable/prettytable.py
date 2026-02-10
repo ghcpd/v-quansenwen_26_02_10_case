@@ -1768,6 +1768,30 @@ class PrettyTable:
 
     def _stringify_header(self, options):
 
+        # First pass: apply style changes and wrapping to field names
+        styled_fields = {}
+        for field in self._field_names:
+            if self._header_style == "cap":
+                fieldname = field.capitalize()
+            elif self._header_style == "title":
+                fieldname = field.title()
+            elif self._header_style == "upper":
+                fieldname = field.upper()
+            elif self._header_style == "lower":
+                fieldname = field.lower()
+            else:
+                fieldname = field
+            
+            # Get the width for this field
+            field_index = self._field_names.index(field)
+            width = self._widths[field_index]
+            
+            # Wrap the field name if it exceeds the width
+            if _str_block_width(fieldname) > width:
+                fieldname = textwrap.fill(fieldname, width)
+            
+            styled_fields[field] = fieldname
+
         bits = []
         lpad, rpad = self._get_padding_widths(options)
         if options["border"]:
@@ -1790,19 +1814,18 @@ class PrettyTable:
                 bits.append(options["vertical_char"])
             else:
                 bits.append(" ")
-        for (field, width) in zip(self._field_names, self._widths):
+        for field in self._field_names:
             if options["fields"] and field not in options["fields"]:
                 continue
-            if self._header_style == "cap":
-                fieldname = field.capitalize()
-            elif self._header_style == "title":
-                fieldname = field.title()
-            elif self._header_style == "upper":
-                fieldname = field.upper()
-            elif self._header_style == "lower":
-                fieldname = field.lower()
-            else:
-                fieldname = field
+            
+            fieldname = styled_fields[field]
+            field_index = self._field_names.index(field)
+            width = self._widths[field_index]
+            
+            # For multi-line field names, only use the first line
+            fieldname_lines = fieldname.split("\n")
+            fieldname = fieldname_lines[0] if fieldname_lines else fieldname
+            
             bits.append(
                 " " * lpad
                 + self._justify(fieldname, width, self._align[field])
