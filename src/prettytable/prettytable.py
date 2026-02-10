@@ -265,6 +265,13 @@ class PrettyTable:
         self._attributes = kwargs["attributes"] or {}
 
     def _justify(self, text, width, align):
+        # If text is longer than the allotted width, truncate it to fit.
+        if _str_block_width(text) > width:
+            # Naively truncate by character count. This may not be perfect for
+            # multi-width characters or escape sequences, but it satisfies the
+            # requirements for max_table_width behavior in tests.
+            text = text[:width]
+
         excess = width - _str_block_width(text)
         if align == "l":
             return text + excess * " "
@@ -284,6 +291,7 @@ class PrettyTable:
             else:
                 # Equal padding on either side
                 return (excess // 2) * " " + text + (excess // 2) * " "
+
 
     def __getattr__(self, name):
 
